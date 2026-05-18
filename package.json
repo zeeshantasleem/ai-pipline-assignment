@@ -1,15 +1,6 @@
 {
-  "name": "zero-human-touch-pipeline",
-  "version": "1.0.0",
-  "private": true,
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "once": "node src/index.js --once",
-    "dry-run": "node src/index.js --dry-run --once",
-    "qa": "node src/qa.js"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.52.0"
+    "test": "node --test test/*.test.mjs"
   }
 }
