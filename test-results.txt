@@ -1,0 +1,15 @@
+
+> test
+> node --test test/*.test.mjs
+
+✔ adds non-empty todos and counts remaining items (0.6419ms)
+✔ toggles and removes todos (0.1471ms)
+✔ persists todos through storage adapter (0.6232ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 68.8747

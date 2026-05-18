@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TO-DO Application</title>
+  <style>
+    :root { color-scheme: light; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #eef2f7; color: #172033; }
+    main { width: min(720px, calc(100% - 28px)); margin: 32px auto; }
+    .panel { background: #fff; border: 1px solid #d7deea; border-radius: 8px; padding: 20px; box-shadow: 0 16px 40px rgba(23, 32, 51, .08); }
+    h1 { margin: 0 0 16px; font-size: clamp(26px, 7vw, 42px); }
+    form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    input, button { font: inherit; border-radius: 6px; border: 1px solid #aeb8c8; padding: 11px 12px; }
+    button { background: #126c5b; color: white; border-color: #126c5b; cursor: pointer; }
+    ul { padding: 0; margin: 18px 0; list-style: none; display: grid; gap: 8px; }
+    li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 10px; border: 1px solid #dde3ed; border-radius: 6px; }
+    li.completed span { text-decoration: line-through; color: #687385; }
+    .meta { color: #475569; }
+    @media (max-width: 430px) { form { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>Todo List</h1>
+      <form id="todo-form">
+        <input id="todo-input" aria-label="New todo" placeholder="Add a task" autocomplete="off">
+        <button type="submit">Add</button>
+      </form>
+      <ul id="todo-list" aria-label="Todos"></ul>
+      <p class="meta"><span id="remaining">0</span> remaining</p>
+    </section>
+  </main>
+  <script type="module">
+    import { createTodoStore, loadTodos, saveTodos } from "./app-logic.js";
+    const store = createTodoStore(loadTodos(localStorage));
+    const form = document.querySelector("#todo-form");
+    const input = document.querySelector("#todo-input");
+    const list = document.querySelector("#todo-list");
+    const remaining = document.querySelector("#remaining");
+
+    function render() {
+      const todos = store.all();
+      list.innerHTML = "";
+      for (const todo of todos) {
+        const item = document.createElement("li");
+        item.className = todo.completed ? "completed" : "";
+        item.innerHTML = '<input type="checkbox" aria-label="Toggle todo"><span></span><button type="button">Delete</button>';
+        item.querySelector("span").textContent = todo.text;
+        item.querySelector("input").checked = todo.completed;
+        item.querySelector("input").addEventListener("change", () => { store.toggle(todo.id); persist(); render(); });
+        item.querySelector("button").addEventListener("click", () => { store.remove(todo.id); persist(); render(); });
+        list.appendChild(item);
+      }
+      remaining.textContent = String(store.remaining());
+    }
+
+    function persist() {
+      saveTodos(localStorage, store.all());
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (store.add(input.value)) {
+        input.value = "";
+        persist();
+        render();
+      }
+    });
+
+    render();
+    window.__PIPELINE_READY__ = "SCRUM-1";
+  </script>
+</body>
+</html>
